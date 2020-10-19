@@ -4,9 +4,12 @@ import client.view.ViewClient;
 
 public class Client {
     public static void main(String[] args) {
-        ViewClient dialog = new ViewClient();
-        dialog.pack();
-        dialog.setVisible(true);
-        System.exit(0);
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                ViewClient vc = new ViewClient();
+                vc.setVisible(true);
+                vc.setSize(800, 600);
+            }
+        });
     }
 }
