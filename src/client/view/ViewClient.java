@@ -67,7 +67,7 @@ public class ViewClient extends JFrame implements IObserver {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                m.connect();
+                m.join();
             }
         });
     }
