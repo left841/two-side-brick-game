@@ -5,23 +5,22 @@ import client.model.IModelClient;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 
-public class ViewClient extends JFrame implements IObserver {
+public class ViewClient extends JPanel implements IObserver {
     IModelClient m;
 
-    private JPanel contentPane;
-    private JButton joinButton;
-    private JPanel mainPane;
-    private JPanel bottomPane;
     private javax.swing.JLabel[][] field;
+
+    ImageIcon blackCell = null;
+    ImageIcon whiteCell = null;
 
     public ViewClient() {
         initComponents();
     }
 
     private void initComponents() {
-
         m = BModelClient.model();
         m.addObserver(this);
 
@@ -29,12 +28,21 @@ public class ViewClient extends JFrame implements IObserver {
         int cellHeight = 16;
         int width = 30;
         int height = 30;
-        ImageIcon blackCell = new ImageIcon(
-                new ImageIcon("src/resources/blackCell.png").getImage().getScaledInstance(16, 16, Image.SCALE_DEFAULT));
-        ImageIcon whiteCell = new ImageIcon(
-                new ImageIcon("src/resources/whiteCell.png").getImage().getScaledInstance(16, 16, Image.SCALE_DEFAULT));
-        mainPane.setSize(width * cellWidth, height * cellHeight);
-        mainPane.setLayout(new java.awt.GridBagLayout());
+
+        try {
+            blackCell = new ImageIcon(
+                    new ImageIcon(Paths.get(this.getClass().getResource("../../resources/blackCell.png").toURI()).toString())
+                    .getImage().getScaledInstance(16, 16, Image.SCALE_DEFAULT));
+            whiteCell = new ImageIcon(
+                    new ImageIcon(Paths.get(this.getClass().getResource("../../resources/whiteCell.png").toURI()).toString())
+                    .getImage().getScaledInstance(16, 16, Image.SCALE_DEFAULT));
+        } catch (URISyntaxException e) {
+            System.out.println("Could no find resource");
+        }
+        setSize(width * cellWidth, height * cellHeight);
+        setMaximumSize(new Dimension(width * cellWidth, height * cellHeight));
+        setMinimumSize(new Dimension(width * cellWidth, height * cellHeight));
+        setLayout(new GridBagLayout());
 
         field = new javax.swing.JLabel[height][width];
 
@@ -45,40 +53,13 @@ public class ViewClient extends JFrame implements IObserver {
                 c.gridy = j;
                 field[i][j] = new javax.swing.JLabel();
                 field[i][j].setIcon(blackCell);
-                mainPane.add(field[i][j], c);
+                add(field[i][j], c);
             }
         }
-
-        setContentPane(contentPane);
-
-        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                onExit();
-            }
-        });
-
-        contentPane.registerKeyboardAction(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onExit();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        joinButton.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                m.join();
-            }
-        });
-    }
-
-    private void onExit() {
-        dispose();
     }
 
     @Override
     public void refresh() {
         System.out.println(m.getRoomNumber());
-        joinButton.setText(m.getRoomNumber() == -1 ? "Join" : "Connected");
     }
 }

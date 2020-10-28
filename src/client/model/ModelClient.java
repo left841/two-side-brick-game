@@ -5,6 +5,7 @@ import client.view.IObserver;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -67,7 +68,7 @@ class ModelClient implements IModelClient {
                 }
             }.start();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Connection failed!");
         }
         refresh();
     }
