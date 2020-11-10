@@ -1,17 +1,15 @@
-package common.tetraminos;
+package common.tetrominos;
 
-import common.Tetramino;
+import common.Tetromino;
 
-import javax.management.RuntimeErrorException;
-
-public class I_Tetramino implements Tetramino {
+public class I_Tetromino implements Tetromino {
     private int state;
 
-    public I_Tetramino() {
+    public I_Tetromino() {
         state = 0;
     }
 
-    public I_Tetramino(int start_state) {
+    public I_Tetromino(int start_state) {
         state = Math.abs(start_state) % 4;
     }
 

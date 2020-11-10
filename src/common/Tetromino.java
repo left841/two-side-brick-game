@@ -1,6 +1,6 @@
 package common;
 
-public interface Tetramino {
+public interface Tetromino {
     int[][] get();
 
     void rotateClockwise();

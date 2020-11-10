@@ -1,10 +1,10 @@
-package common.tetraminos;
+package common.tetrominos;
 
-import common.Tetramino;
+import common.Tetromino;
 
-public class O_Tetramino implements Tetramino {
+public class O_Tetromino implements Tetromino {
 
-    public O_Tetramino() {
+    public O_Tetromino() {
     }
 
     @Override

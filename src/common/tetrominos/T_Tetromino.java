@@ -1,15 +1,15 @@
-package common.tetraminos;
+package common.tetrominos;
 
-import common.Tetramino;
+import common.Tetromino;
 
-public class L_Tetramino  implements Tetramino {
+public class T_Tetromino implements Tetromino {
     private int state;
 
-    public L_Tetramino() {
+    public T_Tetromino() {
         state = 0;
     }
 
-    public L_Tetramino(int start_state) {
+    public T_Tetromino(int start_state) {
         state = Math.abs(start_state) % 4;
     }
 
@@ -18,27 +18,27 @@ public class L_Tetramino  implements Tetramino {
         switch (state) {
             case 0:
                 return new int[][] {
-                        {1, 1, 0},
                         {0, 1, 0},
-                        {0, 1, 0}
-                };
-            case 1:
-                return new int[][] {
-                        {0, 0, 1},
                         {1, 1, 1},
                         {0, 0, 0}
                 };
-            case 2:
+            case 1:
                 return new int[][] {
                         {0, 1, 0},
-                        {0, 1, 0},
-                        {0, 1, 1}
+                        {0, 1, 1},
+                        {0, 1, 0}
                 };
-            case 3:
+            case 2:
                 return new int[][] {
                         {0, 0, 0},
                         {1, 1, 1},
-                        {1, 0, 0}
+                        {0, 1, 0}
+                };
+            case 3:
+                return new int[][] {
+                        {0, 1, 0},
+                        {1, 1, 0},
+                        {0, 1, 0}
                 };
             default:
                 throw new RuntimeException("Invalid State");
