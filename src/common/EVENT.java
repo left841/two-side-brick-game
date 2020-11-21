@@ -1,7 +1,20 @@
 package common;
 
+// server commands for players
 public enum EVENT {
-    MOVE,
-    ROTATE,
-    MERGE
+    START(0),
+    END(1),
+    SPAWN(2),
+    MOVE(3),
+    MERGE(4);
+
+    private final int value;
+
+    EVENT(int name) {
+        value = name;
+    }
+
+    int get_value() {
+        return value;
+    }
 }
