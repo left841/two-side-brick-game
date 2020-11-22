@@ -1,13 +1,9 @@
 package server.model;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.Queue;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
 import common.*;
-import org.w3c.dom.events.Event;
 
 import static java.lang.Thread.sleep;
 
@@ -25,11 +21,12 @@ class ModelServer implements IModelServer {
         private Thread sessionThread;
 
         private void mainLoop() {
-            byte[][] gameField = new byte[30][30];
+            GameField game = new GameField();
             byte frame_cycle_num = 0;
             boolean game_running = false;
             boolean player1_ready = false;
             boolean player2_ready = false;
+            Instruction instruction;
 
             while (true) {
                 if (!game_running) {

@@ -26,7 +26,7 @@ public class GameField {
         player2 = null;
     }
 
-    public int tryPlaseTetromino(Tetromino player, int new_x, int new_y, int color) {
+    public int tryPlaceTetromino(Tetromino player, int new_x, int new_y, int color) {
         if (player == null)
             return 3;
         int[][] box = player.get();
@@ -99,18 +99,18 @@ public class GameField {
     public int spawnPlayer1() {
         p1_x = 0;
         p1_y = field[0].length / 2 - player1.width() / 2;
-        return tryPlaseTetromino(player1, p1_x, p1_y, 0);
+        return tryPlaceTetromino(player1, p1_x, p1_y, 0);
     }
 
     public int spawnPlayer2() {
         p2_x = field.length - player2.height();
         p2_y = field[0].length / 2 - player2.width() / 2;
-        return tryPlaseTetromino(player2, p2_x, p2_y, 1);
+        return tryPlaceTetromino(player2, p2_x, p2_y, 1);
     }
 
     public int rotatePlayer1() {
         player1.rotateClockwise();
-        int ret = tryPlaseTetromino(player1, p1_x, p1_y, 0);
+        int ret = tryPlaceTetromino(player1, p1_x, p1_y, 0);
         if (ret == 0)
             return 0;
         else {
@@ -121,7 +121,7 @@ public class GameField {
 
     public int rotatePlayer2() {
         player1.rotateClockwise();
-        int ret = tryPlaseTetromino(player2, p2_x, p2_y, 0);
+        int ret = tryPlaceTetromino(player2, p2_x, p2_y, 0);
         if (ret == 0)
             return 0;
         else {
