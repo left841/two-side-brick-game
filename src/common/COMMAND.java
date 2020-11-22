@@ -16,7 +16,7 @@ public enum COMMAND {
         value = name;
     }
 
-    int get_value() {
+    int getValue() {
         return value;
     }
 }

@@ -14,7 +14,7 @@ public enum EVENT {
         value = name;
     }
 
-    int get_value() {
+    int getValue() {
         return value;
     }
 }

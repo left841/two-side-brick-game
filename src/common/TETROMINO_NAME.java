@@ -15,7 +15,7 @@ public enum TETROMINO_NAME {
         value = name;
     }
 
-    int get_value() {
+    int getValue() {
         return value;
     }
 
