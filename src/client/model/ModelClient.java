@@ -1,10 +1,9 @@
 package client.model;
 
 import client.view.IObserver;
+import common.Instruction;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -15,8 +14,9 @@ class ModelClient implements IModelClient {
     int port = 3124;
     Thread connection = null;
     Socket cs;
-    DataInputStream dis;
-    DataOutputStream dos;
+    ObjectInputStream ois;
+    ObjectOutputStream oos;
+    Instruction instruction = new Instruction();
 
     ArrayList<IObserver> observers = new ArrayList<>();
     int room = -1;
@@ -72,18 +72,24 @@ class ModelClient implements IModelClient {
         }
         try {
             cs = new Socket(ip, port);
-            dis = new DataInputStream(cs.getInputStream());
-            dos = new DataOutputStream(cs.getOutputStream());
+            oos = new ObjectOutputStream(cs.getOutputStream());
             System.out.println("Client start");
+            instruction.addConnect();
+            instruction.send(oos);
 
             connection = new Thread() {
                 @Override
                 public void run() {
                     try {
+                        System.out.println("Start");
+                        ois = new ObjectInputStream(cs.getInputStream());
                         while (true) {
-                            int operation = dis.readInt();
+                            instruction.recv(ois);
+                            System.out.println(instruction.getInstruction());
                         }
-                    } catch (IOException e) {
+                    } catch (EOFException e) {
+                        System.out.println("Disconnected!");
+                    } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
                     }
                 }
