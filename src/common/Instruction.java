@@ -20,16 +20,20 @@ public class Instruction {
         arr = (Vector<Integer>)ois.readObject();
     }
 
-    void clear() {
+    public Vector<Integer> getInstruction() {
+        return arr;
+    }
+
+    public void clear() {
         arr.clear();
     }
 
-    void addStart() {
+    public void addStart() {
         arr.addElement(EVENT.START.getValue());
     }
 
     // EVENTS
-    void addSpawn(int player, int x, int y, int rot, TETROMINO_NAME type) {
+    public void addSpawn(int player, int x, int y, int rot, TETROMINO_NAME type) {
         arr.addElement(EVENT.SPAWN.getValue());
         arr.addElement(player);
         arr.addElement(x);
@@ -38,7 +42,7 @@ public class Instruction {
         arr.addElement(type.getValue());
     }
 
-    void addMove(int player, int x, int y, int rot) {
+    public void addMove(int player, int x, int y, int rot) {
         arr.addElement(EVENT.MOVE.getValue());
         arr.addElement(player);
         arr.addElement(x);
@@ -46,7 +50,7 @@ public class Instruction {
         arr.addElement(rot);
     }
 
-    void addMerge(int player, int x, int y, int rot, TETROMINO_NAME type) {
+    public void addMerge(int player, int x, int y, int rot, TETROMINO_NAME type) {
         arr.addElement(EVENT.MERGE.getValue());
         arr.addElement(player);
         arr.addElement(x);
@@ -55,37 +59,37 @@ public class Instruction {
         arr.addElement(type.getValue());
     }
 
-    void addEnd(int winner) {
+    public void addEnd(int winner) {
         arr.addElement(EVENT.END.getValue());
         arr.addElement(winner);
     }
 
     // COMMANDS
-    void addConnect() {
+    public void addConnect() {
         arr.addElement(COMMAND.CONNECT.getValue());
     }
 
-    void addDisconnect() {
+    public void addDisconnect() {
         arr.addElement(COMMAND.DISCONNECT.getValue());
     }
 
-    void addReady() {
+    public void addReady() {
         arr.addElement(COMMAND.READY.getValue());
     }
 
-    void addLeft() {
+    public void addLeft() {
         arr.addElement(COMMAND.LEFT.getValue());
     }
 
-    void addUp() {
+    public void addUp() {
         arr.addElement(COMMAND.UP.getValue());
     }
 
-    void addRight() {
+    public void addRight() {
         arr.addElement(COMMAND.RIGHT.getValue());
     }
 
-    void addDown() {
+    public void addDown() {
         arr.addElement(COMMAND.DOWN.getValue());
     }
 
