@@ -2,6 +2,7 @@ package client.view;
 
 import client.model.BModelClient;
 import client.model.IModelClient;
+import common.GameField;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,6 +16,10 @@ public class ViewClient extends JPanel implements IObserver {
 
     ImageIcon blackCell = null;
     ImageIcon whiteCell = null;
+    int cellWidth = 16;
+    int cellHeight = 16;
+    int width = 30;
+    int height = 30;
 
     public ViewClient() {
         initComponents();
@@ -23,11 +28,6 @@ public class ViewClient extends JPanel implements IObserver {
     private void initComponents() {
         m = BModelClient.model();
         m.addObserver(this);
-
-        int cellWidth = 16;
-        int cellHeight = 16;
-        int width = 30;
-        int height = 30;
 
         try {
             blackCell = new ImageIcon(
@@ -61,5 +61,11 @@ public class ViewClient extends JPanel implements IObserver {
     @Override
     public void refresh() {
         System.out.println(m.getRoomNumber());
+        GameField gameState = m.getGameState();
+        for (int i = 0; i < height; ++i) {
+            for (int j = 0; j < width; ++j) {
+                field[i][j].setIcon(gameState.get(i, j) > 0 ? whiteCell : blackCell);
+            }
+        }
     }
 }

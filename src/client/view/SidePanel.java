@@ -55,6 +55,7 @@ public class SidePanel extends JPanel implements IObserver {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
+                m.connect();
                 m.join();
             }
         });
@@ -79,7 +80,6 @@ public class SidePanel extends JPanel implements IObserver {
                     settingsButton.setText("Settings");
                     m.setIp(ipAddressField.getText());
                     m.setPort(portField.getText());
-                    m.connect();
                 }
                 inEditSettingsState = !inEditSettingsState;
             }
