@@ -9,8 +9,11 @@ public class GameField {
     private final int[][] field;
     private Tetromino player1, player2;
     private int p1_x, p2_x, p1_y, p2_y;
+    private int width, height;
 
     public GameField() {
+        width = 30;
+        height = 30;
         field = new int[30][30];
         for (int[] i: field)
             Arrays.fill(i, 0);
@@ -19,11 +22,28 @@ public class GameField {
     }
 
     public GameField(int height, int width) {
+        this.width = width;
+        this.height = height;
         field = new int[height][width];
         for (int[] i: field)
             Arrays.fill(i, 0);
         player1 = null;
         player2 = null;
+    }
+
+    public void init() {
+        for (int i = 0; i < width; ++i) {
+            for (int j = 0; j < height / 2; ++j) {
+                field[i][j] = 0;
+            }
+            for (int j = height / 2; j < height; ++j) {
+                field[i][j] = 1;
+            }
+        }
+    }
+
+    public int get(int x, int y) {
+        return field[x][y];
     }
 
     public int tryPlaceTetromino(Tetromino player, int new_x, int new_y, int color) {

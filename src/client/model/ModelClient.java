@@ -1,6 +1,9 @@
 package client.model;
 
 import client.view.IObserver;
+import common.COMMAND;
+import common.EVENT;
+import common.GameField;
 import common.Instruction;
 
 import java.io.*;
@@ -17,7 +20,7 @@ class ModelClient implements IModelClient {
     ObjectInputStream ois;
     ObjectOutputStream oos;
     Instruction instruction = new Instruction();
-
+    GameField game = new GameField();
     ArrayList<IObserver> observers = new ArrayList<>();
     int room = -1;
 
@@ -27,7 +30,6 @@ class ModelClient implements IModelClient {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        connect();
     }
 
     @Override
@@ -61,6 +63,10 @@ class ModelClient implements IModelClient {
         return port;
     }
 
+    public GameField getGameState() {
+        return game;
+    }
+
     public void setPort(String portStr) {
         port = Integer.parseInt(portStr);
     }
@@ -85,6 +91,7 @@ class ModelClient implements IModelClient {
                         ois = new ObjectInputStream(cs.getInputStream());
                         while (true) {
                             instruction.recv(ois);
+                            processInstruction(instruction);
                             System.out.println(instruction.getInstruction());
                         }
                     } catch (EOFException e) {
@@ -100,6 +107,23 @@ class ModelClient implements IModelClient {
         }
         refresh();
     }
+
+    void processInstruction(Instruction instruction) {
+        EVENT cmd = EVENT.values()[instruction.getInstruction().get(0)];
+        System.out.println("Event: " + cmd);
+        switch (cmd) {
+            case START: {
+                System.out.println("Game has started");
+                game.init();
+                refresh();
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    }
+
 
     void refresh() {
         for (IObserver observer : observers) {
