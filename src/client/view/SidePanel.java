@@ -41,7 +41,9 @@ public class SidePanel extends JPanel implements IObserver {
         add(portField);
 
         joinButton.setText("Join");
+        joinButton.setFocusable(false);
         settingsButton.setText("Settings");
+        settingsButton.setFocusable(false);
         ipAddressLabel.setText("IP address:");
         portLabel.setText("Port:");
 

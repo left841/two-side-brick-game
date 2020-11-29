@@ -4,11 +4,14 @@ import client.model.BModelClient;
 import client.model.IModelClient;
 import client.view.SidePanel;
 import client.view.ViewClient;
+import common.COMMAND;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
-public class Client extends JFrame {
+public class Client extends JFrame implements KeyListener {
     IModelClient m;
     ViewClient view;
     private SidePanel sidePanel;
@@ -18,6 +21,10 @@ public class Client extends JFrame {
     private JPanel sidePane;
 
     Client() {
+        addKeyListener(this);
+        setFocusable(true);
+        setFocusTraversalKeysEnabled(false);
+
         m = BModelClient.model();
 
         setContentPane(contentPane);
@@ -45,5 +52,30 @@ public class Client extends JFrame {
                 vc.setSize(800, 600);
             }
         });
+    }
+
+    @Override
+    public void keyTyped(KeyEvent keyEvent) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent keyEvent) {
+    }
+
+    @Override
+    public void keyReleased(KeyEvent keyEvent) {
+        int ch = keyEvent.getKeyCode();
+//        System.out.println(keyEvent);
+        switch (ch) {
+            case 65: case 37: {
+                m.sendInstruction(COMMAND.LEFT);
+            } break;
+            case 68: case 39: {
+                m.sendInstruction(COMMAND.RIGHT);
+            } break;
+            default: {
+                break;
+            }
+        }
     }
 }

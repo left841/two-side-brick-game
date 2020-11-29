@@ -1,18 +1,17 @@
 package server.view;
 
-import common.COMMAND;
 import common.Instruction;
 
-import javax.swing.*;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.HashMap;
 
 class ViewServer implements IViewServer {
     Socket cs;
+    ObjectInputStream ois;
+    ObjectOutputStream oos;
 
     public ViewServer(Socket s) {
         cs = s;
@@ -21,7 +20,9 @@ class ViewServer implements IViewServer {
     public Instruction getCommand() {
         Instruction instruction = new Instruction();
         try {
-            ObjectInputStream ois = new ObjectInputStream(cs.getInputStream());
+            if (ois == null) {
+                ois = new ObjectInputStream(cs.getInputStream());
+            }
             instruction.recv(ois);
             System.out.println("Got: " + instruction.getInstruction());
         } catch (EOFException e) {
@@ -34,7 +35,9 @@ class ViewServer implements IViewServer {
 
     public void setCommand(Instruction instruction) {
         try {
-            ObjectOutputStream oos = new ObjectOutputStream(cs.getOutputStream());
+            if (oos == null) {
+                oos = new ObjectOutputStream(cs.getOutputStream());
+            }
             instruction.send(oos);
             System.out.println("Sent: " + instruction.getInstruction());
         } catch (IOException e) {

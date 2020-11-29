@@ -124,6 +124,32 @@ class ModelClient implements IModelClient {
         }
     }
 
+    public void sendInstruction(COMMAND command) {
+        Instruction instruction = new Instruction();
+        if (oos == null) {
+            return;
+        }
+        try {
+            switch (command) {
+                case LEFT: {
+                    System.out.println("LEFT");
+                    instruction.addLeft();
+                    instruction.send(oos);
+                } break;
+                case RIGHT: {
+                    System.out.println("RIGHT");
+                    instruction.addRight();
+                    instruction.send(oos);
+                } break;
+                default: {
+                    System.out.println("NOP");
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     void refresh() {
         for (IObserver observer : observers) {

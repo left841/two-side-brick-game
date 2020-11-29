@@ -1,6 +1,7 @@
 package client.model;
 
 import client.view.IObserver;
+import common.COMMAND;
 import common.GameField;
 
 import java.net.InetAddress;
@@ -10,6 +11,7 @@ public interface IModelClient {
     void addObserver(IObserver o);
     void join();
     GameField getGameState();
+    void sendInstruction(COMMAND command);
 
     // Connection
     void connect();
