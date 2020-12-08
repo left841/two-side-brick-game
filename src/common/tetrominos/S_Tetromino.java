@@ -1,5 +1,6 @@
 package common.tetrominos;
 
+import common.TETROMINO_NAME;
 import common.Tetromino;
 
 public class S_Tetromino implements Tetromino {
@@ -63,5 +64,15 @@ public class S_Tetromino implements Tetromino {
     @Override
     public int width() {
         return 3;
+    }
+
+    @Override
+    public int rotation() {
+        return state;
+    }
+
+    @Override
+    public TETROMINO_NAME type() {
+        return TETROMINO_NAME.S;
     }
 }

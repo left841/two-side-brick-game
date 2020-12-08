@@ -15,7 +15,7 @@ public enum TETROMINO_NAME {
         value = name;
     }
 
-    int getValue() {
+    public int getValue() {
         return value;
     }
 

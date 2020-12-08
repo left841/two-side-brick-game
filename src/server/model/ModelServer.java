@@ -1,11 +1,9 @@
 package server.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Queue;
-import java.util.Vector;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import common.*;
+import common.tetrominos.*;
 import server.presenter.IPresenter;
 import server.view.IViewServer;
 
@@ -17,13 +15,8 @@ class ModelServer implements IModelServer {
 
     public class Session {
 
-        public class Event {
-
-        }
-
         private Queue<Instruction> player1q;
         private Queue<Instruction> player2q;
-        private Queue<Event> event_queue;
         private Thread sessionThread;
         private IViewServer player1;
         private IViewServer player2;
@@ -33,31 +26,35 @@ class ModelServer implements IModelServer {
 
         private void mainLoop() {
             GameField game = new GameField();
-            byte frame_cycle_num = 0;
-            Instruction instruction = new Instruction();
+            int frame_cycle_num = 0;
+            Instruction out_instruction = new Instruction();
+            boolean player1spawned = false, player2spawned = false;
+            Random rand = new Random();
 
             while (true) {
                 if (!game_running) {
                     if (player1_ready && player2_ready) {
                         System.out.println("Starting the game!");
                         game_running = true;
-                        instruction.clear();
-                        instruction.addStart();
-                        sendInstruction(instruction);
+                        out_instruction.clear();
+                        out_instruction.addStart();
+                        sendInstruction(out_instruction);
+                        out_instruction.clear();
+                        game.init();
                     } else {
-                        for (int i = 0; (i < 3) && !player1q.isEmpty(); ++i)
+                        while (!player1q.isEmpty())
                         {
-                            instruction = player1q.poll();
-                            COMMAND cmd = COMMAND.values()[instruction.getInstruction().get(0)];
+                            Instruction instr = player1q.poll();
+                            COMMAND cmd = COMMAND.values()[instr.getInstruction().get(0)];
                             if (cmd == COMMAND.CONNECT) {
                                 System.out.println("Player 1 is ready!");
                                 player1_ready = true;
                             }
                         }
-                        for (int i = 0; (i < 3) && !player2q.isEmpty(); ++i)
+                        while (!player2q.isEmpty())
                         {
-                            instruction = player2q.poll();
-                            COMMAND cmd = COMMAND.values()[instruction.getInstruction().get(0)];
+                            Instruction instr = player2q.poll();
+                            COMMAND cmd = COMMAND.values()[instr.getInstruction().get(0)];
                             if (cmd == COMMAND.CONNECT) {
                                 player2_ready = true;
                                 System.out.println("Player 2 is ready!");
@@ -65,7 +62,186 @@ class ModelServer implements IModelServer {
                         }
                     }
                 } else {
-                    // TODO
+                    if (!player1spawned)
+                    {
+                        TETROMINO_NAME tet = generate_tetromino(rand.nextInt() % 7);
+                        game.setPlayer1(tet);
+                        int ret = game.spawnPlayer1();
+                        out_instruction.addSpawn(1, game.getPlayer1x(), game.getPlayer1y(), game.getPlayer1rot(), tet);
+                        sendInstruction(out_instruction);
+                        out_instruction.clear();
+                        if (ret != 0)
+                        {
+                            out_instruction.addEnd(2);
+                            sendInstruction(out_instruction);
+                            out_instruction.clear();
+                            game_running = false;
+                            System.out.println("Player 2 win!");
+                        }
+                        player1spawned = true;
+                    }
+                    if (!player2spawned)
+                    {
+                        TETROMINO_NAME tet = generate_tetromino(rand.nextInt() % 7);
+                        game.setPlayer2(tet);
+                        int ret = game.spawnPlayer2();
+                        out_instruction.addSpawn(2, game.getPlayer2x(), game.getPlayer2y(), game.getPlayer2rot(), tet);
+                        sendInstruction(out_instruction);
+                        out_instruction.clear();
+                        if (ret != 0)
+                        {
+                            out_instruction.addEnd(1);
+                            sendInstruction(out_instruction);
+                            out_instruction.clear();
+                            game_running = false;
+                            System.out.println("Player 1 win!");
+                        }
+                        player2spawned = true;
+                    }
+                    if (game_running) {
+
+                        boolean connection = true;
+                        while (!player1q.isEmpty() && connection)
+                        {
+                            Instruction inst = player1q.poll();
+                            COMMAND cmd = COMMAND.values()[inst.getInstruction().elementAt(0)];
+                            switch (cmd)
+                            {
+                                case DISCONNECT:
+                                    out_instruction.addEnd(2);
+                                    sendInstruction(out_instruction);
+                                    out_instruction.clear();
+                                    game_running = false;
+                                    System.out.println("Player 2 win!");
+                                    player1q.clear();
+                                    player1_ready = false;
+                                    connection = false;
+                                    break;
+                                case UP:
+                                    if (game.rotatePlayer1() == 0) {
+                                        out_instruction.addMove(1, game.getPlayer1x(), game.getPlayer1y(), game.getPlayer1rot());
+                                        sendInstruction(out_instruction);
+                                        out_instruction.clear();
+                                    }
+                                    break;
+                                case DOWN:
+                                    if (game.shiftPlayer1Down() == 0) {
+                                        out_instruction.addMove(1, game.getPlayer1x(), game.getPlayer1y(), game.getPlayer1rot());
+                                        sendInstruction(out_instruction);
+                                        out_instruction.clear();
+                                    }
+                                    break;
+                                case LEFT:
+                                    if (game.shiftPlayer1Left() == 0) {
+                                        out_instruction.addMove(1, game.getPlayer1x(), game.getPlayer1y(), game.getPlayer1rot());
+                                        sendInstruction(out_instruction);
+                                        out_instruction.clear();
+                                    }
+                                    break;
+                                case RIGHT:
+                                    if (game.shiftPlayer1Right() == 0) {
+                                        out_instruction.addMove(1, game.getPlayer1x(), game.getPlayer1y(), game.getPlayer1rot());
+                                        sendInstruction(out_instruction);
+                                        out_instruction.clear();
+                                    }
+                                    break;
+                                default:
+                                    throw new RuntimeException("Invalid Command player 1");
+                            }
+                        }
+                        while (!player2q.isEmpty() && connection)
+                        {
+                            Instruction inst = player2q.poll();
+                            COMMAND cmd = COMMAND.values()[inst.getInstruction().elementAt(0)];
+                            switch (cmd)
+                            {
+                                case DISCONNECT:
+                                    out_instruction.addEnd(1);
+                                    sendInstruction(out_instruction);
+                                    out_instruction.clear();
+                                    game_running = false;
+                                    System.out.println("Player 1 win!");
+                                    player2q.clear();
+                                    player2_ready = false;
+                                    connection = false;
+                                    break;
+                                case UP:
+                                    if (game.rotatePlayer2() == 0) {
+                                        out_instruction.addMove(2, game.getPlayer2x(), game.getPlayer2y(), game.getPlayer2rot());
+                                        sendInstruction(out_instruction);
+                                        out_instruction.clear();
+                                    }
+                                    break;
+                                case DOWN:
+                                    if (game.shiftPlayer2Down() == 0) {
+                                        out_instruction.addMove(2, game.getPlayer2x(), game.getPlayer2y(), game.getPlayer2rot());
+                                        sendInstruction(out_instruction);
+                                        out_instruction.clear();
+                                    }
+                                    break;
+                                case LEFT:
+                                    if (game.shiftPlayer2Left() == 0) {
+                                        out_instruction.addMove(2, game.getPlayer2x(), game.getPlayer2y(), game.getPlayer2rot());
+                                        sendInstruction(out_instruction);
+                                        out_instruction.clear();
+                                    }
+                                    break;
+                                case RIGHT:
+                                    if (game.shiftPlayer2Right() == 0) {
+                                        out_instruction.addMove(2, game.getPlayer2x(), game.getPlayer2y(), game.getPlayer2rot());
+                                        sendInstruction(out_instruction);
+                                        out_instruction.clear();
+                                    }
+                                    break;
+                                default:
+                                    throw new RuntimeException("Invalid Command player 2");
+                            }
+                        }
+                        if (!game_running) {
+                            frame_cycle_num = 0;
+                            player1spawned = false;
+                            player2spawned = false;
+                        }
+
+                        if (frame_cycle_num == 3)
+                        {
+                            int ret = game.doStep();
+                            if ((ret & 1) != 0) {
+                                out_instruction.addMerge(1, game.getPlayer1x(), game.getPlayer1y(), game.getPlayer1rot(), game.player1type());
+                                sendInstruction(out_instruction);
+                                out_instruction.clear();
+                            }
+                            else {
+                                out_instruction.addMove(1, game.getPlayer1x(), game.getPlayer1y(), game.getPlayer1rot());
+                                sendInstruction(out_instruction);
+                                out_instruction.clear();
+                            }
+                            if ((ret & 2) != 0) {
+                                out_instruction.addMerge(2, game.getPlayer2x(), game.getPlayer2y(), game.getPlayer2rot(), game.player2type());
+                                sendInstruction(out_instruction);
+                                out_instruction.clear();
+                            }
+                            else {
+                                out_instruction.addMove(2, game.getPlayer2x(), game.getPlayer2y(), game.getPlayer2rot());
+                                sendInstruction(out_instruction);
+                                out_instruction.clear();
+                            }
+                            System.out.println("Step!");
+                        }
+                        frame_cycle_num = (frame_cycle_num + 1) / 4;
+
+                        if (!game_running) {
+                            frame_cycle_num = 0;
+                            player1spawned = false;
+                            player2spawned = false;
+                        }
+                    }
+                    else {
+                        frame_cycle_num = 0;
+                        player1spawned = false;
+                        player2spawned = false;
+                    }
+
                 }
 
                 try {
@@ -78,10 +254,31 @@ class ModelServer implements IModelServer {
             }
         }
 
+        private TETROMINO_NAME generate_tetromino(int gen) {
+            switch (gen)
+            {
+                case 0:
+                    return TETROMINO_NAME.I;
+                case 1:
+                    return TETROMINO_NAME.J;
+                case 2:
+                    return TETROMINO_NAME.L;
+                case 3:
+                    return TETROMINO_NAME.O;
+                case 4:
+                    return TETROMINO_NAME.S;
+                case 5:
+                    return TETROMINO_NAME.T;
+                case 6:
+                    return TETROMINO_NAME.Z;
+                default:
+                    throw new RuntimeException("invalid tetromino generated");
+            }
+        }
+
         public Session() {
             player1q = new ConcurrentLinkedQueue<Instruction>();
             player2q = new ConcurrentLinkedQueue<Instruction>();
-            event_queue = new ConcurrentLinkedQueue<Event>();
 
             sessionThread = new Thread() {
                 @Override

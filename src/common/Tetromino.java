@@ -8,4 +8,6 @@ public interface Tetromino {
 
     int height();
     int width();
+    int rotation();
+    TETROMINO_NAME type();
 }

@@ -3,7 +3,6 @@ package common;
 import common.tetrominos.*;
 
 import java.util.Arrays;
-import java.util.Random;
 
 public class GameField {
     private final int[][] field;
@@ -40,6 +39,7 @@ public class GameField {
                 field[i][j] = 1;
             }
         }
+        player1 = player2 = null;
     }
 
     public int get(int x, int y) {
@@ -141,7 +141,7 @@ public class GameField {
 
     public int rotatePlayer2() {
         player1.rotateClockwise();
-        int ret = tryPlaceTetromino(player2, p2_x, p2_y, 0);
+        int ret = tryPlaceTetromino(player2, p2_x, p2_y, 1);
         if (ret == 0)
             return 0;
         else {
@@ -151,7 +151,110 @@ public class GameField {
     }
 
     public int doStep() {
-        return 0;
+        int allret = 0;
+        int ret1 = shiftPlayer1Down();
+        if (ret1 == 1) {
+            int[][] box = player1.get();
+            for (int i = 0; i < player1.height(); ++i) {
+                for (int j = 0; j < player1.width(); ++j) {
+                    if (box[i][j] != 0) {
+                        field[p1_x + i][p1_y + j] = 1;
+
+                    }
+                }
+            }
+            player1 = null;
+            allret |= 1;
+        }
+
+        int ret2 = shiftPlayer2Down();
+        if (ret2 == 1) {
+            int[][] box = player2.get();
+            for (int i = 0; i < player2.height(); ++i) {
+                for (int j = 0; j < player2.width(); ++j) {
+                    if (box[i][j] != 0) {
+                        field[p2_x + i][p2_y + j] = 0;
+
+                    }
+                }
+            }
+            player2 = null;
+            allret |= 2;
+        }
+        return allret;
     }
 
+    public int getPlayer1x() {
+        return p1_x;
+    }
+
+    public int getPlayer1y() {
+        return p1_y;
+    }
+
+    public int getPlayer2x() {
+        return p2_x;
+    }
+
+    public int getPlayer2y() {
+        return p2_y;
+    }
+
+    public int getPlayer1rot() {
+        return player1.rotation();
+    }
+
+    public int getPlayer2rot() {
+        return player2.rotation();
+    }
+
+    public int shiftPlayer1Down() {
+        int ret = tryPlaceTetromino(player1, p1_x + 1, p1_y, 0);
+        if (ret == 0)
+            p1_x += 1;
+        return ret;
+    }
+
+    public int shiftPlayer1Left() {
+        int ret = tryPlaceTetromino(player1, p1_x, p1_y - 1, 0);
+        if (ret == 0)
+            p1_y -= 1;
+        return ret;
+    }
+
+    public int shiftPlayer1Right() {
+        int ret = tryPlaceTetromino(player1, p1_x, p1_y + 1, 0);
+        if (ret == 0)
+            p1_y += 1;
+        return ret;
+    }
+
+    public int shiftPlayer2Down() {
+        int ret = tryPlaceTetromino(player2, p2_x - 1, p2_y, 1);
+        if (ret == 0)
+            p2_x -= 1;
+        return ret;
+    }
+
+    public int shiftPlayer2Left() {
+        int ret = tryPlaceTetromino(player2, p2_x, p2_y - 1, 1);
+        if (ret == 0)
+            p2_y -= 1;
+        return ret;
+    }
+
+    public int shiftPlayer2Right() {
+        int ret = tryPlaceTetromino(player2, p2_x, p2_y + 1, 1);
+        if (ret == 0)
+            p2_y += 1;
+        return ret;
+    }
+
+    public TETROMINO_NAME player1type() {
+        return player1.type();
+    }
+
+    public TETROMINO_NAME player2type() {
+        return player2.type();
+    }
 }
