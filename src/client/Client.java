@@ -65,13 +65,19 @@ public class Client extends JFrame implements KeyListener {
     @Override
     public void keyReleased(KeyEvent keyEvent) {
         int ch = keyEvent.getKeyCode();
-//        System.out.println(keyEvent);
+        System.out.println(keyEvent);
         switch (ch) {
             case 65: case 37: {
                 m.sendInstruction(COMMAND.LEFT);
             } break;
             case 68: case 39: {
                 m.sendInstruction(COMMAND.RIGHT);
+            } break;
+            case 87: case 38: {
+                m.sendInstruction(COMMAND.UP);
+            } break;
+            case 83: case 40: {
+                m.sendInstruction(COMMAND.DOWN);
             } break;
             default: {
                 break;

@@ -10,4 +10,6 @@ public interface Tetromino {
     int width();
     int rotation();
     TETROMINO_NAME type();
+
+    void setRotation(int rot);
 }

@@ -108,9 +108,9 @@ class ModelClient implements IModelClient {
     }
 
     Tetromino tetromino1;
-    int prev_x1, prev_y1;
+    int prev_x1, prev_y1, prev_rot1;
     Tetromino tetromino2;
-    int prev_x2, prev_y2;
+    int prev_x2, prev_y2, prev_rot2;
 
     void processInstruction(Instruction instruction) {
         System.out.println("instruction: " + instruction.getInstruction().get(0));
@@ -126,11 +126,6 @@ class ModelClient implements IModelClient {
             case SPAWN: {
                 Tetromino tetromino;
                 int color = 1 - (instruction.getInstruction().get(1) - 1);
-                if (color == 0) {
-                    tetromino = tetromino1;
-                } else {
-                    tetromino = tetromino2;
-                }
                 int x = instruction.getInstruction().get(2);
                 int y = instruction.getInstruction().get(3);
                 int rot = instruction.getInstruction().get(4);
@@ -173,10 +168,12 @@ class ModelClient implements IModelClient {
                     tetromino1 = tetromino;
                     prev_x1 = x;
                     prev_y1 = y;
+                    prev_rot1 = rot;
                 } else {
                     tetromino2 = tetromino;
                     prev_x2 = x;
                     prev_y2 = y;
+                    prev_rot2 = rot;
                 }
                 refresh();
                 break;
@@ -185,6 +182,7 @@ class ModelClient implements IModelClient {
                 Tetromino tetromino;
                 int color = 1 - (instruction.getInstruction().get(1) - 1);
                 int x, y;
+                int rot = instruction.getInstruction().get(4);
                 if (color == 0) {
                     tetromino = tetromino1;
                     x = prev_x1;
@@ -194,7 +192,6 @@ class ModelClient implements IModelClient {
                     x = prev_x2;
                     y = prev_y2;
                 }
-                int rot = instruction.getInstruction().get(4);
                 int[][] t = tetromino.get();
                 for (int i = x; i < x + t.length; ++i) {
                     for (int j = y; j < y + t[0].length; ++j) {
@@ -203,6 +200,8 @@ class ModelClient implements IModelClient {
                         }
                     }
                 }
+                tetromino.setRotation(rot);
+                t = tetromino.get();
                 x = instruction.getInstruction().get(2);
                 y = instruction.getInstruction().get(3);
                 for (int i = x; i < x + t.length; ++i) {
@@ -216,10 +215,12 @@ class ModelClient implements IModelClient {
                     tetromino1 = tetromino;
                     prev_x1 = x;
                     prev_y1 = y;
+                    prev_rot1 = rot;
                 } else {
                     tetromino2 = tetromino;
                     prev_x2 = x;
                     prev_y2 = y;
+                    prev_rot2 = rot;
                 }
                 refresh();
                 break;
@@ -245,6 +246,16 @@ class ModelClient implements IModelClient {
                 case RIGHT: {
                     System.out.println("RIGHT");
                     instruction.addRight();
+                    instruction.send(oos);
+                } break;
+                case UP: {
+                    System.out.println("UP");
+                    instruction.addUp();
+                    instruction.send(oos);
+                } break;
+                case DOWN: {
+                    System.out.println("DOWN");
+                    instruction.addDown();
                     instruction.send(oos);
                 } break;
                 default: {

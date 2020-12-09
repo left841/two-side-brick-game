@@ -75,4 +75,9 @@ public class S_Tetromino implements Tetromino {
     public TETROMINO_NAME type() {
         return TETROMINO_NAME.S;
     }
+
+    @Override
+    public void setRotation(int rot) {
+        state = rot;
+    }
 }

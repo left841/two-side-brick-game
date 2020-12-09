@@ -75,4 +75,9 @@ public class Z_Tetromino implements Tetromino {
     public TETROMINO_NAME type() {
         return TETROMINO_NAME.Z;
     }
+
+    @Override
+    public void setRotation(int rot) {
+        state = rot;
+    }
 }
