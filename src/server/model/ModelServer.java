@@ -18,8 +18,8 @@ class ModelServer implements IModelServer {
         private Queue<Instruction> player1q;
         private Queue<Instruction> player2q;
         private Thread sessionThread;
-        private IViewServer player1;
-        private IViewServer player2;
+        private int presenters_count = 0;
+        private HashMap<Integer, IPresenter> players_p = new HashMap<Integer, IPresenter>();
         boolean game_running = false;
         boolean player1_ready = false;
         boolean player2_ready = false;
@@ -260,6 +260,23 @@ class ModelServer implements IModelServer {
             }
         }
 
+        private void sendInstruction(Instruction instruction) {
+            for (int i = 0; i < 2; ++i) {
+                IPresenter p = players_p.get(i);
+                if (p != null)
+                    p.update(instruction);
+            }
+        }
+
+        public void addPresenter(IPresenter presenter) {
+            players_p.put(presenters_count, presenter);
+            ++presenters_count;
+        }
+
+        public int getPresentersCount() {
+            return presenters_count;
+        }
+
         private TETROMINO_NAME generate_tetromino(int gen) {
             switch (gen)
             {
@@ -327,13 +344,21 @@ class ModelServer implements IModelServer {
         }
     }
 
-    private ArrayList<IPresenter> presenters = new ArrayList<>();
     private ArrayList<Session> sessions;
     private HashMap<IViewServer, Integer> players = new HashMap<>();
     private int playerId = 0;
 
     public void addPresenter(IPresenter p) {
-        presenters.add(p);
+        if (sessions.isEmpty()) {
+            sessions.add(new Session());
+        }
+        if (sessions.get(sessions.size() - 1).getPresentersCount() < 2) {
+            sessions.get(sessions.size() - 1).addPresenter(p);
+        }
+        else {
+            sessions.add(new Session());
+            sessions.get(sessions.size() - 1).addPresenter(p);
+        }
     }
 
     private void checkPlayer(IViewServer player) {
@@ -348,6 +373,7 @@ class ModelServer implements IModelServer {
     public void addCommand(IViewServer v, Instruction instruction) {
         checkPlayer(v);
         int id = players.get(v);
+
         if (id % 2 == 0) {
             sessions.get(id / 2).addPlayer1Cmd(instruction);
         } else {
@@ -357,14 +383,6 @@ class ModelServer implements IModelServer {
 
     public ModelServer() {
         System.out.println("ModelServer");
-        sessions = new ArrayList<Session>(1);
-        sessions.add(new Session());
-        sessions.set(0, new Session());
-    }
-
-    void sendInstruction(Instruction instruction) {
-        for (IPresenter p : presenters) {
-            p.update(instruction);
-        }
+        sessions = new ArrayList<Session>(0);
     }
 }
