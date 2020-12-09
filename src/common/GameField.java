@@ -151,7 +151,7 @@ public class GameField {
     }
 
     public int rotatePlayer2() {
-        player1.rotateClockwise();
+        player2.rotateClockwise();
         int ret = tryPlaceTetromino(player2, p2_x, p2_y, 1);
         if (ret == 0)
             return 0;
