@@ -101,6 +101,8 @@ class ModelServer implements IModelServer {
                     if (game_running) {
 
                         boolean connection = true;
+
+                        System.out.println("QUEUE: " + player1q.size() + " " + player2q.size());
                         while (!player1q.isEmpty() && connection)
                         {
                             Instruction inst = player1q.poll();
@@ -210,6 +212,7 @@ class ModelServer implements IModelServer {
                                 out_instruction.addMerge(1, game.getPlayer1x(), game.getPlayer1y(), game.getPlayer1rot(), game.player1type());
                                 sendInstruction(out_instruction);
                                 out_instruction.clear();
+                                player1spawned = false;
                             }
                             else {
                                 out_instruction.addMove(1, game.getPlayer1x(), game.getPlayer1y(), game.getPlayer1rot());
@@ -220,6 +223,7 @@ class ModelServer implements IModelServer {
                                 out_instruction.addMerge(2, game.getPlayer2x(), game.getPlayer2y(), game.getPlayer2rot(), game.player2type());
                                 sendInstruction(out_instruction);
                                 out_instruction.clear();
+                                player2spawned = false;
                             }
                             else {
                                 out_instruction.addMove(2, game.getPlayer2x(), game.getPlayer2y(), game.getPlayer2rot());
@@ -245,7 +249,7 @@ class ModelServer implements IModelServer {
                 }
 
                 try {
-                    sleep(590);
+                    sleep(200);
                     System.out.println("iteration!!!");
                 }
                 catch (InterruptedException e) {
@@ -342,7 +346,7 @@ class ModelServer implements IModelServer {
     public void addCommand(IViewServer v, Instruction instruction) {
         checkPlayer(v);
         int id = players.get(v);
-        if (!sessions.get(id / 2).isPlayer1Ready()) {
+        if (id % 2 == 0) {
             sessions.get(id / 2).addPlayer1Cmd(instruction);
         } else {
             sessions.get(id / 2).addPlayer2Cmd(instruction);

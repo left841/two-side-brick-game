@@ -164,7 +164,7 @@ public class GameField {
     public int doStep() {
         int allret = 0;
         int ret1 = shiftPlayer1Down();
-        if (ret1 == 1) {
+        if (ret1 == 2) {
             int[][] box = player1.get();
             for (int i = 0; i < player1.height(); ++i) {
                 for (int j = 0; j < player1.width(); ++j) {
@@ -174,12 +174,11 @@ public class GameField {
                     }
                 }
             }
-            player1 = null;
             allret |= 1;
         }
 
         int ret2 = shiftPlayer2Down();
-        if (ret2 == 1) {
+        if (ret2 == 2) {
             int[][] box = player2.get();
             for (int i = 0; i < player2.height(); ++i) {
                 for (int j = 0; j < player2.width(); ++j) {
@@ -189,7 +188,6 @@ public class GameField {
                     }
                 }
             }
-            player2 = null;
             allret |= 2;
         }
         return allret;
