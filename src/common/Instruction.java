@@ -3,13 +3,17 @@ package common;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class Instruction {
-    private Vector<Integer> arr;
+    private ArrayList<Integer> arr;
 
     public Instruction() {
-        arr = new Vector<Integer>(0);
+        arr = new ArrayList<Integer>(0);
+    }
+
+    public Instruction(Instruction instruction) {
+        arr = new ArrayList<>(instruction.arr);
     }
 
     public void send(ObjectOutputStream oos) throws IOException {
@@ -17,10 +21,12 @@ public class Instruction {
     }
 
     public void recv(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-        arr = (Vector<Integer>)ois.readObject();
+        System.out.println("Start reading");
+        arr = (ArrayList<Integer>)ois.readObject();
+        System.out.println("Finish reading" + arr);
     }
 
-    public Vector<Integer> getInstruction() {
+    public ArrayList<Integer> getInstruction() {
         return arr;
     }
 
@@ -29,68 +35,68 @@ public class Instruction {
     }
 
     public void addStart() {
-        arr.addElement(EVENT.START.getValue());
+        arr.add(EVENT.START.getValue());
     }
 
     // EVENTS
     public void addSpawn(int player, int x, int y, int rot, TETROMINO_NAME type) {
-        arr.addElement(EVENT.SPAWN.getValue());
-        arr.addElement(player);
-        arr.addElement(x);
-        arr.addElement(y);
-        arr.addElement(rot);
-        arr.addElement(type.getValue());
+        arr.add(EVENT.SPAWN.getValue());
+        arr.add(player);
+        arr.add(x);
+        arr.add(y);
+        arr.add(rot);
+        arr.add(type.getValue());
     }
 
     public void addMove(int player, int x, int y, int rot) {
-        arr.addElement(EVENT.MOVE.getValue());
-        arr.addElement(player);
-        arr.addElement(x);
-        arr.addElement(y);
-        arr.addElement(rot);
+        arr.add(EVENT.MOVE.getValue());
+        arr.add(player);
+        arr.add(x);
+        arr.add(y);
+        arr.add(rot);
     }
 
     public void addMerge(int player, int x, int y, int rot, TETROMINO_NAME type) {
-        arr.addElement(EVENT.MERGE.getValue());
-        arr.addElement(player);
-        arr.addElement(x);
-        arr.addElement(y);
-        arr.addElement(rot);
-        arr.addElement(type.getValue());
+        arr.add(EVENT.MERGE.getValue());
+        arr.add(player);
+        arr.add(x);
+        arr.add(y);
+        arr.add(rot);
+        arr.add(type.getValue());
     }
 
     public void addEnd(int winner) {
-        arr.addElement(EVENT.END.getValue());
-        arr.addElement(winner);
+        arr.add(EVENT.END.getValue());
+        arr.add(winner);
     }
 
     // COMMANDS
     public void addConnect() {
-        arr.addElement(COMMAND.CONNECT.getValue());
+        arr.add(COMMAND.CONNECT.getValue());
     }
 
     public void addDisconnect() {
-        arr.addElement(COMMAND.DISCONNECT.getValue());
+        arr.add(COMMAND.DISCONNECT.getValue());
     }
 
     public void addReady() {
-        arr.addElement(COMMAND.READY.getValue());
+        arr.add(COMMAND.READY.getValue());
     }
 
     public void addLeft() {
-        arr.addElement(COMMAND.LEFT.getValue());
+        arr.add(COMMAND.LEFT.getValue());
     }
 
     public void addUp() {
-        arr.addElement(COMMAND.UP.getValue());
+        arr.add(COMMAND.UP.getValue());
     }
 
     public void addRight() {
-        arr.addElement(COMMAND.RIGHT.getValue());
+        arr.add(COMMAND.RIGHT.getValue());
     }
 
     public void addDown() {
-        arr.addElement(COMMAND.DOWN.getValue());
+        arr.add(COMMAND.DOWN.getValue());
     }
 
 }

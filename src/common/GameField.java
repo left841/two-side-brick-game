@@ -31,11 +31,13 @@ public class GameField {
     }
 
     public void init() {
-        for (int i = 0; i < width; ++i) {
-            for (int j = 0; j < height / 2; ++j) {
+        for (int i = 0; i < height / 2; ++i) {
+            for (int j = 0; j < width; ++j) {
                 field[i][j] = 0;
             }
-            for (int j = height / 2; j < height; ++j) {
+        }
+        for (int i = height / 2 + 1; i < height; ++i) {
+            for (int j = 0; j < width; ++j) {
                 field[i][j] = 1;
             }
         }
@@ -46,6 +48,10 @@ public class GameField {
         return field[x][y];
     }
 
+    public void set(int x, int y, int color) {
+        field[x][y] = color;
+    }
+
     public int tryPlaceTetromino(Tetromino player, int new_x, int new_y, int color) {
         if (player == null)
             return 3;
@@ -53,13 +59,18 @@ public class GameField {
         for (int i = 0; i < player.height(); ++i) {
             for (int j = 0; j < player.width(); ++j) {
                 if (box[i][j] != 0) {
-                    if ((new_x + i < 0) || (new_x + i > field.length) || (new_y + j < 0) || (new_y + j > field[0].length))
+                    if ((new_x + i < 0) || (new_x + i > field.length) || (new_y + j < 0) || (new_y + j > field[0].length)) {
+                        System.out.println("tryPlaceTetromino: 1");
                         return 1;
-                    else if (field[new_x + i][new_y + j] != color)
+                    }
+                    else if (field[new_x + i][new_y + j] != color) {
+                        System.out.println("tryPlaceTetromino: 2");
                         return 2;
+                    }
                 }
             }
         }
+        System.out.println("tryPlaceTetromino: 0");
         return 0;
     }
 

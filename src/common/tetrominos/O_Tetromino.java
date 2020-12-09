@@ -8,6 +8,9 @@ public class O_Tetromino implements Tetromino {
     public O_Tetromino() {
     }
 
+    public O_Tetromino(int rot) {
+    }
+
     @Override
     public int[][] get() {
         return new int[][]{

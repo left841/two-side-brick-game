@@ -38,8 +38,9 @@ class ViewServer implements IViewServer {
             if (oos == null) {
                 oos = new ObjectOutputStream(cs.getOutputStream());
             }
-            instruction.send(oos);
-            System.out.println("Sent: " + instruction.getInstruction());
+            Instruction instructionToSend = new Instruction(instruction);
+            instructionToSend.send(oos);
+            System.out.println("Sent: " + instructionToSend.getInstruction());
         } catch (IOException e) {
             e.printStackTrace();
         }

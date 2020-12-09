@@ -64,7 +64,7 @@ public class ViewClient extends JPanel implements IObserver {
         GameField gameState = m.getGameState();
         for (int i = 0; i < height; ++i) {
             for (int j = 0; j < width; ++j) {
-                field[i][j].setIcon(gameState.get(i, j) > 0 ? whiteCell : blackCell);
+                field[i][j].setIcon(gameState.get(j, i) > 0 ? whiteCell : blackCell);
             }
         }
     }

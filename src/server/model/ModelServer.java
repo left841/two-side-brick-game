@@ -64,7 +64,7 @@ class ModelServer implements IModelServer {
                 } else {
                     if (!player1spawned)
                     {
-                        TETROMINO_NAME tet = generate_tetromino(rand.nextInt() % 7);
+                        TETROMINO_NAME tet = generate_tetromino(Math.abs(rand.nextInt()) % 7);
                         game.setPlayer1(tet);
                         int ret = game.spawnPlayer1();
                         out_instruction.addSpawn(1, game.getPlayer1x(), game.getPlayer1y(), game.getPlayer1rot(), tet);
@@ -82,7 +82,7 @@ class ModelServer implements IModelServer {
                     }
                     if (!player2spawned)
                     {
-                        TETROMINO_NAME tet = generate_tetromino(rand.nextInt() % 7);
+                        TETROMINO_NAME tet = generate_tetromino(Math.abs(rand.nextInt()) % 7);
                         game.setPlayer2(tet);
                         int ret = game.spawnPlayer2();
                         out_instruction.addSpawn(2, game.getPlayer2x(), game.getPlayer2y(), game.getPlayer2rot(), tet);
@@ -104,7 +104,7 @@ class ModelServer implements IModelServer {
                         while (!player1q.isEmpty() && connection)
                         {
                             Instruction inst = player1q.poll();
-                            COMMAND cmd = COMMAND.values()[inst.getInstruction().elementAt(0)];
+                            COMMAND cmd = COMMAND.values()[inst.getInstruction().get(0)];
                             switch (cmd)
                             {
                                 case DISCONNECT:
@@ -152,7 +152,7 @@ class ModelServer implements IModelServer {
                         while (!player2q.isEmpty() && connection)
                         {
                             Instruction inst = player2q.poll();
-                            COMMAND cmd = COMMAND.values()[inst.getInstruction().elementAt(0)];
+                            COMMAND cmd = COMMAND.values()[inst.getInstruction().get(0)];
                             switch (cmd)
                             {
                                 case DISCONNECT:
@@ -228,7 +228,7 @@ class ModelServer implements IModelServer {
                             }
                             System.out.println("Step!");
                         }
-                        frame_cycle_num = (frame_cycle_num + 1) / 4;
+                        frame_cycle_num = (frame_cycle_num + 1) % 4;
 
                         if (!game_running) {
                             frame_cycle_num = 0;
@@ -245,7 +245,7 @@ class ModelServer implements IModelServer {
                 }
 
                 try {
-                    sleep(200);
+                    sleep(590);
                     System.out.println("iteration!!!");
                 }
                 catch (InterruptedException e) {
@@ -322,7 +322,7 @@ class ModelServer implements IModelServer {
     }
 
     private ArrayList<IPresenter> presenters = new ArrayList<>();
-    private Vector<Session> sessions;
+    private ArrayList<Session> sessions;
     private HashMap<IViewServer, Integer> players = new HashMap<>();
     private int playerId = 0;
 
@@ -351,8 +351,8 @@ class ModelServer implements IModelServer {
 
     public ModelServer() {
         System.out.println("ModelServer");
-        sessions = new Vector<Session>(1);
-        sessions.setSize(1);
+        sessions = new ArrayList<Session>(1);
+        sessions.add(new Session());
         sessions.set(0, new Session());
     }
 

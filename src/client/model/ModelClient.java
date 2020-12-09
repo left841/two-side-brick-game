@@ -1,10 +1,8 @@
 package client.model;
 
 import client.view.IObserver;
-import common.COMMAND;
-import common.EVENT;
-import common.GameField;
-import common.Instruction;
+import common.*;
+import common.tetrominos.*;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -90,9 +88,10 @@ class ModelClient implements IModelClient {
                         System.out.println("Start");
                         ois = new ObjectInputStream(cs.getInputStream());
                         while (true) {
-                            instruction.recv(ois);
-                            processInstruction(instruction);
-                            System.out.println(instruction.getInstruction());
+                            Instruction instruction2 = new Instruction();
+                            instruction2.recv(ois);
+                            processInstruction(instruction2);
+                            System.out.println(instruction2.getInstruction());
                         }
                     } catch (EOFException e) {
                         System.out.println("Disconnected!");
@@ -108,13 +107,120 @@ class ModelClient implements IModelClient {
         refresh();
     }
 
+    Tetromino tetromino1;
+    int prev_x1, prev_y1;
+    Tetromino tetromino2;
+    int prev_x2, prev_y2;
+
     void processInstruction(Instruction instruction) {
+        System.out.println("instruction: " + instruction.getInstruction().get(0));
         EVENT cmd = EVENT.values()[instruction.getInstruction().get(0)];
         System.out.println("Event: " + cmd);
         switch (cmd) {
             case START: {
                 System.out.println("Game has started");
                 game.init();
+                refresh();
+                break;
+            }
+            case SPAWN: {
+                Tetromino tetromino;
+                int color = 1 - (instruction.getInstruction().get(1) - 1);
+                if (color == 0) {
+                    tetromino = tetromino1;
+                } else {
+                    tetromino = tetromino2;
+                }
+                int x = instruction.getInstruction().get(2);
+                int y = instruction.getInstruction().get(3);
+                int rot = instruction.getInstruction().get(4);
+                TETROMINO_NAME type = TETROMINO_NAME.values()[instruction.getInstruction().get(5)];
+                switch (type)
+                {
+                    case I:
+                        tetromino = new I_Tetromino(rot);
+                        break;
+                    case J:
+                        tetromino = new J_Tetromino(rot);
+                        break;
+                    case L:
+                        tetromino = new L_Tetromino(rot);
+                        break;
+                    case O:
+                        tetromino = new O_Tetromino(rot);
+                        break;
+                    case S:
+                        tetromino = new S_Tetromino(rot);
+                        break;
+                    case T:
+                        tetromino = new T_Tetromino(rot);
+                        break;
+                    case Z:
+                        tetromino = new Z_Tetromino(rot);
+                        break;
+                    default:
+                        throw new RuntimeException("Wrong tetromino");
+                }
+                int[][] t = tetromino.get();
+                for (int i = x; i < x + t.length; ++i) {
+                    for (int j = y; j < y + t[0].length; ++j) {
+                        if (t[i - x][j - y] > 0) {
+                            game.set(i, j, color);
+                        }
+                    }
+                }
+                if (color == 0) {
+                    tetromino1 = tetromino;
+                    prev_x1 = x;
+                    prev_y1 = y;
+                } else {
+                    tetromino2 = tetromino;
+                    prev_x2 = x;
+                    prev_y2 = y;
+                }
+                refresh();
+                break;
+            }
+            case MOVE: {
+                Tetromino tetromino;
+                int color = 1 - (instruction.getInstruction().get(1) - 1);
+                int x, y;
+                if (color == 0) {
+                    tetromino = tetromino1;
+                    x = prev_x1;
+                    y = prev_y1;
+                } else {
+                    tetromino = tetromino2;
+                    x = prev_x2;
+                    y = prev_y2;
+                }
+                int rot = instruction.getInstruction().get(4);
+                int[][] t = tetromino.get();
+                for (int i = x; i < x + t.length; ++i) {
+                    for (int j = y; j < y + t[0].length; ++j) {
+                        if (t[i - x][j - y] > 0) {
+                            game.set(i, j, 1 - color);
+                        }
+                    }
+                }
+                x = instruction.getInstruction().get(2);
+                y = instruction.getInstruction().get(3);
+                for (int i = x; i < x + t.length; ++i) {
+                    for (int j = y; j < y + t[0].length; ++j) {
+                        if (t[i - x][j - y] > 0) {
+                            game.set(i, j, color);
+                        }
+                    }
+                }
+                if (color == 0) {
+                    tetromino1 = tetromino;
+                    prev_x1 = x;
+                    prev_y1 = y;
+                } else {
+                    tetromino2 = tetromino;
+                    prev_x2 = x;
+                    prev_y2 = y;
+                }
                 refresh();
                 break;
             }
