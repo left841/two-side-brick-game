@@ -2,6 +2,7 @@ package client;
 
 import client.model.BModelClient;
 import client.model.IModelClient;
+import client.view.IObserver;
 import client.view.SidePanel;
 import client.view.ViewClient;
 import common.COMMAND;
@@ -11,7 +12,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class Client extends JFrame implements KeyListener {
+public class Client extends JFrame implements KeyListener, IObserver {
     IModelClient m;
     ViewClient view;
     private SidePanel sidePanel;
@@ -19,6 +20,7 @@ public class Client extends JFrame implements KeyListener {
     private JPanel contentPane;
     private JPanel mainPane;
     private JPanel sidePane;
+    private JTextArea logArea;
 
     Client() {
         addKeyListener(this);
@@ -26,6 +28,7 @@ public class Client extends JFrame implements KeyListener {
         setFocusTraversalKeysEnabled(false);
 
         m = BModelClient.model();
+        m.addObserver(this);
 
         setContentPane(contentPane);
         setVisible(true);
@@ -42,6 +45,9 @@ public class Client extends JFrame implements KeyListener {
         sidePanel = new SidePanel();
         sidePane.setLayout(new GridLayout());
         sidePane.add(sidePanel);
+
+        logArea.setText("Game log:\n");
+        logArea.setEditable(false);
     }
 
     public static void main(String[] args) {
@@ -83,5 +89,15 @@ public class Client extends JFrame implements KeyListener {
                 break;
             }
         }
+    }
+
+    @Override
+    public void refresh() {
+        var queue = m.getLogQueue();
+        System.out.println("QUEUE: " + queue.size() + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1");
+        for (var string : queue) {
+            logArea.append(string + "\n");
+        }
+        m.clearLogQueue();
     }
 }

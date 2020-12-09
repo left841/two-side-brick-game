@@ -32,7 +32,7 @@ public class SidePanel extends JPanel implements IObserver {
         joinButton.setMaximumSize(new Dimension(200, 30));
         settingsButton.setMaximumSize(new Dimension(200, 30));
 
-        setLayout(new GridLayout(20, 1));
+        setLayout(new GridLayout(6, 1));
         add(joinButton);
         add(settingsButton);
         add(ipAddressLabel);

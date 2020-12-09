@@ -21,6 +21,7 @@ class ModelClient implements IModelClient {
     GameField game = new GameField();
     ArrayList<IObserver> observers = new ArrayList<>();
     int room = -1;
+    ArrayList<String> logQueue = new ArrayList<>();
 
     ModelClient() {
         try {
@@ -119,8 +120,14 @@ class ModelClient implements IModelClient {
         switch (cmd) {
             case START: {
                 System.out.println("Game has started");
+                logQueue.add("Game has started!");
                 game.init();
                 refresh();
+                break;
+            }
+            case END: {
+                int won = instruction.getInstruction().get(1);
+                logQueue.add("Game has ended! " + (won == 1 ? "Upper" : "Lower") + " player won!");
                 break;
             }
             case SPAWN: {
@@ -272,5 +279,13 @@ class ModelClient implements IModelClient {
         for (IObserver observer : observers) {
             observer.refresh();
         }
+    }
+
+    public ArrayList<String> getLogQueue() {
+        return logQueue;
+    }
+
+    public void clearLogQueue() {
+        logQueue.clear();
     }
 }

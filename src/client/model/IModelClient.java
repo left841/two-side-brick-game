@@ -5,6 +5,7 @@ import common.COMMAND;
 import common.GameField;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
 
 public interface IModelClient {
     int getRoomNumber();
@@ -19,4 +20,6 @@ public interface IModelClient {
     void setIp(String ip);
     int getPort();
     void setPort(String port);
+    ArrayList<String> getLogQueue();
+    void clearLogQueue();
 }
