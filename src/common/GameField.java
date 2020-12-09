@@ -36,7 +36,7 @@ public class GameField {
                 field[i][j] = 0;
             }
         }
-        for (int i = height / 2 + 1; i < height; ++i) {
+        for (int i = height / 2; i < height; ++i) {
             for (int j = 0; j < width; ++j) {
                 field[i][j] = 1;
             }
@@ -59,7 +59,7 @@ public class GameField {
         for (int i = 0; i < player.height(); ++i) {
             for (int j = 0; j < player.width(); ++j) {
                 if (box[i][j] != 0) {
-                    if ((new_x + i < 0) || (new_x + i > field.length) || (new_y + j < 0) || (new_y + j > field[0].length)) {
+                    if ((new_x + i < 0) || (new_x + i >= field.length) || (new_y + j < 0) || (new_y + j >= field[0].length)) {
                         System.out.println("tryPlaceTetromino: 1");
                         return 1;
                     }
