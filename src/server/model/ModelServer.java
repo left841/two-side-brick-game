@@ -128,6 +128,7 @@ class ModelServer implements IModelServer {
                                     break;
                                 case DOWN:
                                     if (game.shiftPlayer1Down() == 0) {
+                                        while (game.shiftPlayer1Down() == 0);
                                         out_instruction.addMove(1, game.getPlayer1x(), game.getPlayer1y(), game.getPlayer1rot());
                                         sendInstruction(out_instruction);
                                         out_instruction.clear();
@@ -176,6 +177,7 @@ class ModelServer implements IModelServer {
                                     break;
                                 case DOWN:
                                     if (game.shiftPlayer2Down() == 0) {
+                                        while (game.shiftPlayer2Down() == 0);
                                         out_instruction.addMove(2, game.getPlayer2x(), game.getPlayer2y(), game.getPlayer2rot());
                                         sendInstruction(out_instruction);
                                         out_instruction.clear();
