@@ -48,6 +48,7 @@ public class Client extends JFrame implements KeyListener, IObserver {
 
         logArea.setText("Game log:\n");
         logArea.setEditable(false);
+        logArea.setFocusable(false);
     }
 
     public static void main(String[] args) {
@@ -94,7 +95,6 @@ public class Client extends JFrame implements KeyListener, IObserver {
     @Override
     public void refresh() {
         var queue = m.getLogQueue();
-        System.out.println("QUEUE: " + queue.size() + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1");
         for (var string : queue) {
             logArea.append(string + "\n");
         }

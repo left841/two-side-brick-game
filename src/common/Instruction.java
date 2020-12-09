@@ -3,6 +3,7 @@ package common;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.SocketException;
 import java.util.ArrayList;
 
 public class Instruction {
@@ -17,7 +18,10 @@ public class Instruction {
     }
 
     public void send(ObjectOutputStream oos) throws IOException {
-        oos.writeObject(arr);
+        try {
+            oos.writeObject(arr);
+        } catch (SocketException e) {
+        }
     }
 
     public void recv(ObjectInputStream ois) throws IOException, ClassNotFoundException {
